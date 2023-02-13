@@ -2,12 +2,14 @@ package main
 
 import (
 	"encoding/json"
-    "errors"
-    "net/http"
-    "strconv"
+	"errors"
+	"net/http"
+	"strconv"
 
-    "github.com/julienschmidt/httprouter"
+	"github.com/julienschmidt/httprouter"
 )
+
+type envelope map[string]any
 
 // Retrieve the "id" URL parameter from the current request context, then convert it to
 // an integer and return it. If the operation isn't successful, return 0 and an error.
@@ -22,13 +24,13 @@ func (app *application) readIDParam(r *http.Request) (int64, error) {
 	return id, nil
 }
 
-func (app *application) writeJSON(w http.ResponseWriter, status int, data any, headers http.Header) error {
+func (app *application) writeJSON(w http.ResponseWriter, status int, data envelope, headers http.Header) error {
 	// The Marshal function returns a byte slice containing the encoded JSON.
-	js, err := json.Marshal(data)
+	js, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
 		return err
 	}
-	
+
 	js = append(js, '\n')
 
 	for key, value := range headers {
