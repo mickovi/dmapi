@@ -10,9 +10,9 @@ func (app *application) routes() *httprouter.Router {
 	// Initialize a new httprouter router instance.
 	router := httprouter.New()
 
-	// Convert the notFoundResponse() and methodNotAllowedResponse() helpers to a http.Handler using the 
-    // http.HandlerFunc() adapter, and then set them as the customs error handler for 404 and 405
-    // responses.
+	// Convert the notFoundResponse() and methodNotAllowedResponse() helpers to a http.Handler using the
+	// http.HandlerFunc() adapter, and then set them as the customs error handler for 404 and 405
+	// responses.
 	router.NotFound = http.HandlerFunc(app.notFoundResponse)
 	router.MethodNotAllowed = http.HandlerFunc(app.methodNotAllowedResponse)
 
@@ -20,7 +20,7 @@ func (app *application) routes() *httprouter.Router {
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
 	router.HandlerFunc(http.MethodPost, "/v1/movies", app.createMovieHandler)
 	router.HandlerFunc(http.MethodGet, "/v1/movies/:id", app.showMovieHandler)
-	router.HandlerFunc(http.MethodPut, "/v1/movies/:id", app.updateMovieHandler)
+	router.HandlerFunc(http.MethodPatch, "/v1/movies/:id", app.updateMovieHandler)
 	router.HandlerFunc(http.MethodDelete, "/v1/movies/:id", app.deleteMovieHandler)
 
 	return router
