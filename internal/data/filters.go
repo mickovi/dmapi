@@ -1,6 +1,7 @@
 package data
 
 import (
+	"math"
 	"strings"
 
 	"github.com/mickovi/dmapi/internal/validator"
@@ -11,6 +12,15 @@ type Filters struct {
 	PageSize     int
 	Sort         string
 	SortSafelist []string
+}
+
+// Define a new MetaData struct for holding the pagination metadata.
+type Metadata struct {
+	CurrentPage  int `json:"current_page,omitempty"`
+	PageSize     int `json:"page_size,omitempty"`
+	FirstPage    int `json:"first_page,omitempty"`
+	LastPage     int `json:"last_page,omitempty"`
+	TotalRecords int `json:"total_records,omitempty"`
 }
 
 func ValidateFilters(v *validator.Validator, f Filters) {
@@ -50,4 +60,21 @@ func (f Filters) limit() int {
 
 func (f Filters) offset() int {
 	return (f.Page - 1) * f.PageSize
+}
+
+// The calculateMetadata() function calculates the appropriate pagination metadata
+// values given the total number of records, current page, and page size values.
+func calculeMetadata(TotalRecords, page, pageSize int) Metadata {
+	if TotalRecords == 0 {
+		// We return an empty Metadata struct if there are no records.
+		return Metadata{}
+	}
+
+	return Metadata{
+		CurrentPage:  page,
+		PageSize:     pageSize,
+		FirstPage:    1,
+		LastPage:     int(math.Ceil(float64(TotalRecords) / float64(pageSize))),
+		TotalRecords: TotalRecords,
+	}
 }
