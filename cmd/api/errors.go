@@ -7,7 +7,11 @@ import (
 
 // The logError() method is a generic helper for logging an error message.
 func (app *application) logError(r *http.Request, err error) {
-	app.logger.Print(err)
+	// app.logger.Print(err)
+	app.logger.PrintError(err, map[string]string{
+		"request_method": r.Method,
+		"request_url":    r.URL.String(),
+	})
 }
 
 // The errorResponse() method is a generic helper for sending JSON-formatted error
@@ -62,9 +66,9 @@ func (app *application) failedValidationResponse(w http.ResponseWriter, r *http.
 	app.errorResponse(w, r, http.StatusUnprocessableEntity, errors)
 }
 
-// editConflictResponse() helper sends a 409 Conflict response, along with a plain-English error message 
+// editConflictResponse() helper sends a 409 Conflict response, along with a plain-English error message
 // that explains the problem to the client.
 func (app *application) editConflictResponse(w http.ResponseWriter, r *http.Request) {
-    message := "unable to update the record due to an edit conflict, please try again"
-    app.errorResponse(w, r, http.StatusConflict, message)
+	message := "unable to update the record due to an edit conflict, please try again"
+	app.errorResponse(w, r, http.StatusConflict, message)
 }
